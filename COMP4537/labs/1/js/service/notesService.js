@@ -9,10 +9,10 @@ const getNotes = () => {
   }
 };
 
-function _setNotes(notes) {
+const _setNotes = (notes) => {
   localStorage.setItem(NOTES, JSON.stringify(notes));
   window.dispatchEvent(new Event("storage"));
-}
+};
 
 const addNote = (note) => {
   if (!note) return;
