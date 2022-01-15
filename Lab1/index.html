@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 1</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <main class="index-view">
+      <div class="container">
+        <h3>Lab 1: JSON, Object Constructor, localStorage by Ryan Leung</h3>
+        <div class="mt-5 d-flex justify-content-center">
+          <a href="reader.html">
+            <button id="reader-view" class="button">Reader View</button>
+          </a>
+          <a href="writer.html">
+            <button id="writer-view" class="button">Writer View</button>
+          </a>
+        </div>
+      </div>
+    </main>
+    <!--
+        Answers to additional questions for Lab 1 assignment.
+
+        1- open the writer.html and reader.html in two different tabs of same browser. 
+        Would the reader.html have access to the content stored in the local storage by the writer.html?
+
+        Yes. This is because both tabs are in the same browser, and both tabs have access to the same local storage service
+        provided by the same browser. As long as both tabs are connected to the same origin (origin + protocol).
+
+        2- open the writer.html and reader.html in two different tabs of two different browsers 
+        ( e.g. one in chrome, one in Firefox) . Would the reader.html have access to the content stored 
+        in the local storage by the writer.html?
+
+        No. This is because the local storage service is exclusive to each browser.
+        Local storages cannot be shared amongst different browsers, hence reader.html does not have access to 
+        content stored in the local storage by writer.html.
+    -->
+  </body>
+</html>
