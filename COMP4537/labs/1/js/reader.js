@@ -1,12 +1,18 @@
 import { getNotes } from "./service/notesService.js";
 
-const updateLabel = "updated at:";
+const MSG_NOT_SUPPORTED = "Sorry web Storage is not supported";
+const UPDATE_LABEL = "updated at:";
+
+if (typeof Storage == "undefined") {
+  document.write(MSG_NOT_SUPPORTED);
+  window.stop();
+}
 
 const timeEl = document.getElementById("time");
 const notesEl = document.getElementById("notes");
 
 const renderTime = () => {
-  timeEl.innerHTML = `${updateLabel} ${new Date().toTimeString()}`;
+  timeEl.innerHTML = `${UPDATE_LABEL} ${new Date().toTimeString()}`;
 };
 
 const renderNotes = () => {

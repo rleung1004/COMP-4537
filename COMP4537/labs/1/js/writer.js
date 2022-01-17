@@ -6,6 +6,13 @@ import {
   updateNotes,
 } from "./service/notesService.js";
 
+const MSG_NOT_SUPPORTED = "Sorry web Storage is not supported";
+
+if (typeof Storage == "undefined") {
+  document.write(MSG_NOT_SUPPORTED);
+  window.stop();
+}
+
 const timeEl = document.getElementById("time");
 const notesEl = document.getElementById("notes");
 const addEl = document.getElementById("add");
