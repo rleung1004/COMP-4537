@@ -2,7 +2,7 @@ const http = require("http");
 const url = require("url");
 
 const PORT_NUMBER = 3030;
-const validWordPattern = new RegExp("[A-Za-z'-]+");
+const validWordPattern = new RegExp("^[A-Za-z'-]+$");
 
 const GET = "GET";
 const POST = "POST";
@@ -70,7 +70,7 @@ const postEndpoint = (req, res) => {
       res.writeHeader(200, defaultHeader);
       const resBody = {
         message: "New entry recorded.",
-        recorded: `${reqBody.word}: ${reqBody.definition}`,
+        data: `${reqBody.word}: ${reqBody.definition}`,
         requestCount,
       };
       res.end(JSON.stringify(resBody));
