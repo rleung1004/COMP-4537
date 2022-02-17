@@ -47,7 +47,7 @@ app.post(endPointRoot + "/write", (req, res) => {
 
   req.on("end", () => {
     let body = JSON.parse(data);
-    const sqlQuery = `INSERT INTO score(name, score) VALUES ('${body.name}', ${body.score})'`;
+    const sqlQuery = `INSERT INTO score(name, score) VALUES ('${body.name}', ${body.score})`;
     con.query(sqlQuery, (sqlErr, sqlRes) => {
       if (sqlErr) {
         res.status(500).send({ message: `Error: ${sqlErr.message}` });
