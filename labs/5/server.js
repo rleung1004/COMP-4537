@@ -45,7 +45,7 @@ app.patch(endPointRoot + "/write", (req, res) => {
 
   req.on("end", () => {
     let body = JSON.parse(data);
-    const sqlQuery = `INSERT INTO score(name, score) VALUES ('${body.name}', ${body.score})`;
+    const sqlQuery = `UPDATE score SET score = ${body.score} WHERE name = '${body.name}'`;
     con.query(sqlQuery, (sqlErr, sqlRes) => {
       if (sqlErr) {
         res.status(500).send({ message: `Error: ${sqlErr.message}` });
