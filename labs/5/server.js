@@ -10,6 +10,10 @@ const con = mysql.createConnection({
   database: "lab5",
 });
 
+con.on("error", (err) => {
+  console.log("[SQL Error]: ", err);
+});
+
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, PATCH");
@@ -21,7 +25,7 @@ app.use((req, res, next) => {
 app.get(endPointRoot + "/read", (req, res) => {
   con.query("SELECT * FROM score", (sqlErr, sqlRes) => {
     if (sqlErr) throw sqlErr;
-    console.log(sqlRes); // TODO: Remove
+    console.log(sqlRes); // logging
     const resBody = {
       message: "GET request success",
       data: sqlRes,
@@ -39,12 +43,14 @@ app.patch(endPointRoot + "/write", (req, res) => {
     }
   });
 
-  req.on("end", (req, res) => {
+  req.on("end", () => {
     let body = JSON.parse(data);
-    const sqlQuery = `UPDATE score SET value = ${body.score} WHERE name = '${body.name}'`;
+    const sqlQuery = `INSERT INTO score(name, score) VALUES ('${body.name}', ${body.score})`;
     con.query(sqlQuery, (sqlErr, sqlRes) => {
-      if (sqlErr) throw sqlErr;
-      console.log(sqlRes); // TODO: Remove
+      if (sqlErr) {
+        res.status(500).send({ message: `Error: ${sqlErr.message}` });
+      }
+      console.log(sqlRes.message); // logging
       const resBody = {
         message: `${body.name}: ${body.score} was stored in the DB`,
       };
