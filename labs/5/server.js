@@ -41,7 +41,7 @@ app.patch(endPointRoot + "/write", (req, res) => {
 
   req.on("end", (req, res) => {
     let body = JSON.parse(data);
-    const sqlQuery = `UPDATE score SET value = '${body.score}' WHERE name = ${body.name}`;
+    const sqlQuery = `UPDATE score SET value = ${body.score} WHERE name = '${body.name}'`;
     con.query(sqlQuery, (sqlErr, sqlRes) => {
       if (sqlErr) throw sqlErr;
       console.log(sqlRes); // TODO: Remove
