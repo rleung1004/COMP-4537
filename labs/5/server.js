@@ -1,6 +1,6 @@
 const express = require("express");
 const mysql = require("mysql");
-const PORT = process.env.PORT || 8888;
+const PORT = 33334;
 const app = express();
 const endPointRoot = "/api";
 const con = mysql.createConnection({
