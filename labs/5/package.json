@@ -1,4 +1,9 @@
 {
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "npm install --production && node server.js"
+  },
   "dependencies": {
     "express": "^4.17.2",
     "mysql": "^2.18.1"
