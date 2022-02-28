@@ -9,9 +9,9 @@ const app = express();
 const endPointRoot = "/api";
 const dbConfig = {
   host: "localhost",
-  user: "lab5user",
-  password: "comp4537",
-  database: "lab5",
+  user: "root",
+  password: "",
+  database: "test",
 };
 let db;
 
@@ -44,6 +44,17 @@ const queryDB = (query) => {
   });
 };
 
+const validRequestBody = (body, err) => {
+  if (!body.name || !body.score) {
+    Object.assign(err, { message: "Error: name or score not defined" });
+    return false;
+  } else if (typeof body.score !== "number") {
+    Object.assign(err, { message: "Error: score must be a number" });
+    return false;
+  }
+  return true;
+};
+
 dbConnect();
 
 app.use((req, res, next) => {
@@ -54,7 +65,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get(endPointRoot + "/read", (req, res) => {
+app.get(endPointRoot + "/read", (req, res, next) => {
   queryDB("SELECT * FROM score")
     .then((result) => {
       console.log(result); // logging
@@ -69,7 +80,7 @@ app.get(endPointRoot + "/read", (req, res) => {
     });
 });
 
-app.post(endPointRoot + "/write", (req, res) => {
+app.post(endPointRoot + "/write", (req, res, next) => {
   let data = "";
   // collect chunks of data
   req.on("data", (chunk) => {
@@ -80,10 +91,11 @@ app.post(endPointRoot + "/write", (req, res) => {
 
   req.on("end", () => {
     let body = JSON.parse(data);
-    if (!body.name || !body.score) {
+    const errMsg = {};
+    if (!validRequestBody(body, errMsg)) {
       res.status(BAD_REQUEST);
       res.send({
-        message: "Invalid request. Request must have name and body defined.",
+        message: errMsg.message,
       });
     }
 
