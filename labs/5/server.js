@@ -97,6 +97,7 @@ app.post(endPointRoot + "/write", (req, res, next) => {
       res.send({
         message: errMsg.message,
       });
+      return;
     }
 
     const sqlQuery = `INSERT INTO score(name, score) VALUES ('${body.name}', ${body.score})`;
