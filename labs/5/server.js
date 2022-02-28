@@ -1,18 +1,50 @@
 const express = require("express");
 const mysql = require("mysql");
 const PORT = 33334;
+const OK = 200;
+const BAD_REQUEST = 400;
+const INTERNAL_SERVER_ERROR = 500;
+const RECONNECT_TIMER = 2000;
 const app = express();
 const endPointRoot = "/api";
-const con = mysql.createConnection({
+const dbConfig = {
   host: "localhost",
   user: "lab5user",
   password: "comp4537",
   database: "lab5",
-});
+};
+let db;
 
-con.on("error", (err) => {
-  console.log("[SQL Error]: ", err);
-});
+const dbConnect = () => {
+  db = mysql.createConnection(dbConfig);
+
+  db.connect((err) => {
+    if (err) {
+      console.log("Error when connecting to db:", err);
+      setTimeout(dbConnect, RECONNECT_TIMER);
+    }
+  });
+  db.on("error", (err) => {
+    console.log("[SQL Error]: ", err);
+    if (err.code === "PROTOCOL_CONNECTION_LOST") {
+      dbConnect();
+    }
+  });
+};
+
+const queryDB = (query) => {
+  return new Promise((resolve, reject) => {
+    db.query(query, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+dbConnect();
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -23,17 +55,18 @@ app.use((req, res, next) => {
 });
 
 app.get(endPointRoot + "/read", (req, res) => {
-  con.query("SELECT * FROM score", (sqlErr, sqlRes) => {
-    if (sqlErr) {
-      res.status(500).send({ message: `Error: ${sqlErr.message}` });
-    }
-    console.log(sqlRes); // logging
-    const resBody = {
-      message: "GET request success",
-      data: sqlRes,
-    };
-    res.status(200).send(JSON.stringify(resBody));
-  });
+  queryDB("SELECT * FROM score")
+    .then((result) => {
+      console.log(result); // logging
+      const resBody = {
+        message: "GET request success",
+        data: result,
+      };
+      res.status(OK).send(JSON.stringify(resBody));
+    })
+    .catch((err) => {
+      next(err);
+    });
 });
 
 app.post(endPointRoot + "/write", (req, res) => {
@@ -47,17 +80,34 @@ app.post(endPointRoot + "/write", (req, res) => {
 
   req.on("end", () => {
     let body = JSON.parse(data);
+    if (!body.name || !body.score) {
+      res.status(BAD_REQUEST);
+      res.send({
+        message: "Invalid request. Request must have name and body defined.",
+      });
+    }
+
     const sqlQuery = `INSERT INTO score(name, score) VALUES ('${body.name}', ${body.score})`;
-    con.query(sqlQuery, (sqlErr, sqlRes) => {
-      if (sqlErr) {
-        res.status(500).send({ message: `Error: ${sqlErr.message}` });
-      }
-      console.log(sqlRes.message); // logging
-      const resBody = {
-        message: `${body.name}: ${body.score} was stored in the DB`,
-      };
-      res.status(200).send(JSON.stringify(resBody));
-    });
+    queryDB(sqlQuery)
+      .then((result) => {
+        console.log(result); // logging
+        const resBody = {
+          message: `${body.name}: ${body.score} was stored in the DB`,
+        };
+        res.status(OK).send(JSON.stringify(resBody));
+      })
+      .catch((err) => {
+        next(err);
+      });
+  });
+});
+
+app.use((err, req, res, next) => {
+  const statusCode =
+    res.statusCode !== OK ? res.statusCode : INTERNAL_SERVER_ERROR;
+  res.status(statusCode);
+  res.send({
+    message: err.message,
   });
 });
 
