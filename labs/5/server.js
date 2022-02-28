@@ -9,9 +9,9 @@ const app = express();
 const endPointRoot = "/api";
 const dbConfig = {
   host: "localhost",
-  user: "root",
-  password: "",
-  database: "test",
+  user: "lab5user",
+  password: "comp4537",
+  database: "lab5",
 };
 let db;
 
